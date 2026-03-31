@@ -1,0 +1,103 @@
+{
+  "nodes": [
+    {
+      "id": "exit_left",
+      "label": "Exit Left",
+      "type": "exit",
+      "pos": [
+        30,
+        200
+      ],
+      "zone_id": 1
+    },
+    {
+      "id": "zone_left",
+      "label": "Left Zone",
+      "type": "zone",
+      "pos": [
+        130,
+        200
+      ],
+      "zone_id": 1
+    },
+    {
+      "id": "corridor_left",
+      "label": "Corridor Left",
+      "type": "corridor",
+      "pos": [
+        240,
+        200
+      ]
+    },
+    {
+      "id": "center",
+      "label": "Center",
+      "type": "corridor",
+      "pos": [
+        400,
+        200
+      ]
+    },
+    {
+      "id": "corridor_right",
+      "label": "Corridor Right",
+      "type": "corridor",
+      "pos": [
+        560,
+        200
+      ]
+    },
+    {
+      "id": "zone_right",
+      "label": "Right Zone",
+      "type": "zone",
+      "pos": [
+        670,
+        200
+      ],
+      "zone_id": 2
+    },
+    {
+      "id": "exit_right",
+      "label": "Exit Right",
+      "type": "exit",
+      "pos": [
+        770,
+        200
+      ],
+      "zone_id": 2
+    }
+  ],
+  "edges": [
+    {
+      "from": "exit_left",
+      "to": "zone_left",
+      "base_weight": 1.0
+    },
+    {
+      "from": "zone_left",
+      "to": "corridor_left",
+      "base_weight": 1.0
+    },
+    {
+      "from": "corridor_left",
+      "to": "center",
+      "base_weight": 1.0
+    },
+    {
+      "from": "center",
+      "to": "corridor_right",
+      "base_weight": 1.0
+    },
+    {
+      "from": "corridor_right",
+      "to": "zone_right",
+      "base_weight": 1.0
+    },
+    {
+      "from": "zone_right",
+      "to": "exit_right",
+      "base_weight": 1.0
+    }
+  ]
+}

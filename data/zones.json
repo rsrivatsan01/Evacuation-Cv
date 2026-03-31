@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Exit A - North",
+    "bbox": [
+      1,
+      4,
+      140,
+      528
+    ],
+    "capacity": 3,
+    "color": [
+      0,
+      255,
+      0
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Exit B - South",
+    "bbox": [
+      809,
+      1,
+      960,
+      531
+    ],
+    "capacity": 3,
+    "color": [
+      0,
+      200,
+      255
+    ]
+  }
+]

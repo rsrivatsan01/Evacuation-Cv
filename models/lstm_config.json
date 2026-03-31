@@ -1,0 +1,34 @@
+{
+  "seq_len": 30,
+  "n_features": 4,
+  "feature_cols": [
+    "count",
+    "avg_speed",
+    "density",
+    "zone_id_norm"
+  ],
+  "status_map": {
+    "SAFE": 0,
+    "MODERATE": 1,
+    "CRITICAL": 2
+  },
+  "idx_to_status": {
+    "0": "SAFE",
+    "1": "MODERATE",
+    "2": "CRITICAL"
+  },
+  "zone_names": [
+    "Exit A - North",
+    "Exit B - South",
+    "Exit C - East"
+  ],
+  "zone_to_idx": {
+    "Exit A - North": 0,
+    "Exit B - South": 1,
+    "Exit C - East": 2
+  },
+  "n_zones": 3,
+  "hidden_size": 64,
+  "n_layers": 2,
+  "dropout": 0.3
+}

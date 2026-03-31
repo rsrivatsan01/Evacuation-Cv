@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evacuation System — Analytics</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div class="nav-brand">🚨 AI Evacuation System</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">🔴 Live Dashboard</a>
+    <a href="/analytics" class="nav-link active">📊 Analytics</a>
+  </div>
+  <div class="nav-status">
+    <button class="btn btn-sm" onclick="loadAnalytics()">🔄 Refresh</button>
+  </div>
+</nav>
+
+<div class="analytics-container">
+
+  <div class="analytics-header">
+    <h2>Crowd Movement Analytics</h2>
+    <p>Historical analysis from logged feature data</p>
+  </div>
+
+  <!-- ROW 1: Line charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">People Count Over Time</div>
+      <canvas id="countChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Average Speed Over Time</div>
+      <canvas id="speedChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ROW 2: Pie + Bar -->
+  <div class="charts-row">
+    <div class="chart-card chart-card-sm">
+      <div class="chart-title">Status Distribution</div>
+      <canvas id="statusChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Density Over Time</div>
+      <canvas id="densityChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ROW 3: Zone comparison table -->
+  <div class="table-card">
+    <div class="chart-title">Zone Comparison</div>
+    <div id="zone-table-container">
+      <table class="zone-table" id="zone-table">
+        <thead>
+          <tr>
+            <th>Zone</th>
+            <th>Avg Count</th>
+            <th>Max Count</th>
+            <th>Avg Speed</th>
+            <th>Avg Density</th>
+            <th>SAFE %</th>
+            <th>MODERATE %</th>
+            <th>CRITICAL %</th>
+          </tr>
+        </thead>
+        <tbody id="zone-table-body">
+          <tr><td colspan="8" style="text-align:center;color:#888">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Chart instances ────────────────────────────
+let countChart, speedChart, statusChart, densityChart;
+
+const ZONE_COLORS = [
+  'rgba(52, 152, 219, 0.8)',
+  'rgba(46, 204, 113, 0.8)',
+  'rgba(231, 76, 60, 0.8)',
+  'rgba(241, 196, 15, 0.8)',
+];
+
+const CHART_DEFAULTS = {
+  responsive      : true,
+  maintainAspectRatio: true,
+  animation       : { duration: 300 },
+  plugins         : { legend: { labels: { color: '#ccc' } } },
+  scales: {
+    x: { ticks: { color: '#888', maxTicksLimit: 10 }, grid: { color: '#333' } },
+    y: { ticks: { color: '#888' },                    grid: { color: '#333' } },
+  }
+};
+
+function initCharts() {
+  const cfg = (type, data, opts={}) => ({
+    type, data,
+    options: { ...CHART_DEFAULTS, ...opts }
+  });
+
+  countChart = new Chart(
+    document.getElementById('countChart'),
+    cfg('line', { datasets: [] })
+  );
+  speedChart = new Chart(
+    document.getElementById('speedChart'),
+    cfg('line', { datasets: [] })
+  );
+  densityChart = new Chart(
+    document.getElementById('densityChart'),
+    cfg('line', { datasets: [] })
+  );
+  statusChart = new Chart(
+    document.getElementById('statusChart'),
+    {
+      type: 'doughnut',
+      data: { labels: [], datasets: [{ data: [], backgroundColor: ['#2ecc71','#f39c12','#e74c3c'] }] },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { color: '#ccc' } } }
+      }
+    }
+  );
+}
+
+function updateLineChart(chart, zoneData, key) {
+  chart.data.datasets = [];
+  let i = 0;
+  for (const [zoneName, data] of Object.entries(zoneData)) {
+    chart.data.datasets.push({
+      label           : zoneName,
+      data            : data.frame_ids.map((f, idx) => ({ x: f, y: data[key][idx] })),
+      borderColor     : ZONE_COLORS[i % ZONE_COLORS.length],
+      backgroundColor : ZONE_COLORS[i % ZONE_COLORS.length].replace('0.8', '0.1'),
+      borderWidth     : 1.5,
+      pointRadius     : 0,
+      tension         : 0.3,
+    });
+    i++;
+  }
+  chart.options.scales.x.type = 'linear';
+  chart.options.scales.x.title = { display: true, text: 'Frame', color: '#888' };
+  chart.update();
+}
+
+async function loadAnalytics() {
+  try {
+    // Zone features
+    const zRes  = await fetch('/api/analytics/zone_features');
+    const zData = await zRes.json();
+    if (!zData.error) {
+      updateLineChart(countChart,   zData, 'counts');
+      updateLineChart(speedChart,   zData, 'speeds');
+      updateLineChart(densityChart, zData, 'densities');
+    }
+
+    // Status distribution
+    const sRes  = await fetch('/api/analytics/status_distribution');
+    const sData = await sRes.json();
+    if (!sData.error) {
+      statusChart.data.labels           = sData.labels;
+      statusChart.data.datasets[0].data = sData.values;
+      statusChart.update();
+    }
+
+    // Zone comparison table
+    const tRes  = await fetch('/api/analytics/zone_comparison');
+    const tData = await tRes.json();
+    if (!tData.error && Array.isArray(tData)) {
+      const tbody = document.getElementById('zone-table-body');
+      tbody.innerHTML = tData.map(z => `
+        <tr>
+          <td>${z.zone}</td>
+          <td>${z.avg_count}</td>
+          <td>${z.max_count}</td>
+          <td>${z.avg_speed}</td>
+          <td>${z.avg_density}</td>
+          <td class="safe">${z.safe_pct}%</td>
+          <td class="moderate">${z.moderate_pct}%</td>
+          <td class="critical">${z.critical_pct}%</td>
+        </tr>
+      `).join('');
+    }
+
+  } catch (err) {
+    console.error('Analytics load error:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initCharts();
+  loadAnalytics();
+});
+</script>
+</body>
+</html>

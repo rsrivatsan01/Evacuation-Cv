@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evacuation System — Live Dashboard</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div class="nav-brand">🚨 AI Evacuation System</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link active">🔴 Live Dashboard</a>
+    <a href="/analytics" class="nav-link">📊 Analytics</a>
+  </div>
+  <div class="nav-status">
+    <span id="sys-fps">FPS: --</span>
+    <span id="sys-persons">Persons: --</span>
+    <span id="lstm-status" class="badge badge-warming">LSTM: Warming</span>
+  </div>
+</nav>
+
+<!-- ALERT BANNER -->
+<div id="alert-banner" class="alert-banner hidden">
+  <span id="alert-text">⚠️ EVACUATION ALERT</span>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-grid">
+
+  <!-- PANEL 1: LIVE VIDEO -->
+  <div class="panel panel-video">
+    <div class="panel-header">
+      <span class="panel-title">🎥 Live Feed</span>
+      <span class="panel-badge" id="video-badge">LIVE</span>
+    </div>
+    <div class="panel-body">
+      <img id="video-feed" src="/video_feed" alt="Live Feed" class="video-stream" onclick="toggleFullScreen(this)" title="Click to view fullscreen"/>
+    </div>
+  </div>
+
+  <!-- PANEL 2: FLOOR MAP -->
+  <div class="panel panel-floormap">
+    <div class="panel-header">
+      <span class="panel-title">🗺️ Floor Map</span>
+      <button class="btn btn-sm" onclick="toggleSettings()">⚙️ Settings</button>
+    </div>
+    <div class="panel-body">
+      <img id="floormap-feed" src="/floormap_feed" alt="Floor Map" class="video-stream" onclick="toggleFullScreen(this)" title="Click to view fullscreen"/>
+    </div>
+
+    <!-- SETTINGS PANEL (hidden by default) -->
+    <div id="settings-panel" class="settings-panel hidden">
+      <h4>Upload Floor Map</h4>
+      <div class="upload-row">
+        <input type="file" id="floormap-file" accept=".png,.jpg,.jpeg"/>
+        <button class="btn btn-primary" onclick="uploadFloormap()">Upload</button>
+      </div>
+      <p id="upload-msg" class="upload-msg"></p>
+
+      <h4>Exit Zones</h4>
+      <div id="zones-list"></div>
+      <p class="hint">* Edit name and capacity. Restart to apply bbox changes.</p>
+    </div>
+  </div>
+
+  <!-- PANEL 3: STATS -->
+  <div class="panel panel-stats">
+    <div class="panel-header">
+      <span class="panel-title">📊 Status</span>
+    </div>
+    <div class="panel-body">
+
+      <!-- Exit status cards -->
+      <div class="section-label">EXIT STATUS</div>
+      <div id="exit-cards"></div>
+
+      <!-- Zone features -->
+      <div class="section-label" style="margin-top:16px">ZONE FEATURES</div>
+      <div id="zone-features"></div>
+
+      <!-- Global stats -->
+      <div class="section-label" style="margin-top:16px">GLOBAL STATS</div>
+      <div class="stats-grid" id="global-stats">
+        <div class="stat-item"><div class="stat-val" id="g-count">--</div><div class="stat-lbl">Persons</div></div>
+        <div class="stat-item"><div class="stat-val" id="g-speed">--</div><div class="stat-lbl">Avg Speed</div></div>
+        <div class="stat-item"><div class="stat-val" id="g-density">--</div><div class="stat-lbl">Density</div></div>
+        <div class="stat-item"><div class="stat-val" id="g-fps">--</div><div class="stat-lbl">FPS</div></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end main-grid -->
+
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

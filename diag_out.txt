@@ -1,0 +1,8 @@
+
+--- Exit A - North ---
+{'status': 'MODERATE', 'probs': {'SAFE': 0.1262, 'MODERATE': 0.7689, 'CRITICAL': 0.1049}, 'confidence': 0.7689, 'pred_idx': 1}
+Last feature_vec: [-0.8556598  -6.946554   -0.94724905  0.        ]
+
+--- Exit B - South ---
+{'status': 'SAFE', 'probs': {'SAFE': 0.9999, 'MODERATE': 0.0001, 'CRITICAL': 0.0}, 'confidence': 0.9999, 'pred_idx': 0}
+Last feature_vec: [-0.38673374  1.0191954  -0.4435554   0.5       ]
