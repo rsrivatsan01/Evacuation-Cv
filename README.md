@@ -6,7 +6,7 @@
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.10-white.svg?logo=opencv)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-A real-time crowd monitoring and evacuation routing system for public venues (malls, stations, stadiums). It uses YOLOv8 for person detection, ByteTrack for multi-object tracking, an LSTM neural network for congestion prediction, and Dijkstra path planning to recommend the safest exit routes — all streamed to a live web dashboard.
+A real-time crowd monitoring and evacuation routing system for public venues (malls, stations, stadiums). It uses YOLOv8 for person detection, ByteTrack for multi-object tracking, an LSTM neural network for congestion prediction and Dijkstra path planning to recommend the safest exit routes — all streamed to a live web dashboard.
 
 ---
 
